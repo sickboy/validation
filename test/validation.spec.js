@@ -2,6 +2,9 @@ import {Validation} from '../src/validation';
 import {ObserverLocator} from 'aurelia-binding';
 import {Expectations} from './expectations';
 import {ValidationConfig} from '../src/validation-config';
+import {Container} from 'aurelia-dependency-injection';
+
+let container = new Container();
 
 class TestSubject {
   constructor(validation, firstName) {
@@ -10,7 +13,8 @@ class TestSubject {
   }
 
   static createInstance(firstName, config) {
-    var subject = new TestSubject(new Validation(new ObserverLocator(), config), firstName);
+    // let container = new Container();
+    var subject = new TestSubject(new Validation(container.get(ObserverLocator), config), firstName);
     subject.validation
       .ensure('firstName')
       .isNotEmpty();
@@ -19,6 +23,12 @@ class TestSubject {
 }
 
 describe('Basic validation tests', () => {
+  let container;
+
+  beforeEach(() => {
+    container = new Container();
+  });
+
   it('should fail if a notempty property is null', (done) => {
     var subject = TestSubject.createInstance(null);
     setTimeout(()=> {
@@ -96,7 +106,7 @@ describe('Basic validation tests', () => {
     var expectations = new Expectations(expect, done);
     var subject = {firstName: 'John'};
 
-    subject.validation = new Validation(new ObserverLocator()).on(subject)
+    subject.validation = new Validation(container.get(ObserverLocator)).on(subject)
       .ensure('firstName').isNotEmpty().hasLengthBetween(5, 10);
 
     setTimeout(() => {
@@ -120,7 +130,7 @@ describe('Basic validation tests', () => {
   it('should update the validation automatically when the property changes with nested properties', (done) => {
     var subject = {company: {name: 'Bob the builder construction, Inc.'}};
 
-    subject.validation = new Validation(new ObserverLocator()).on(subject)
+    subject.validation = new Validation(container.get(ObserverLocator)).on(subject)
       .ensure('company.name')
       .isNotEmpty().hasLengthBetween(5, 10);
     setTimeout(() => { //Settimeout to allow initial validation
@@ -177,7 +187,7 @@ describe('Basic validation tests', () => {
   });
 
   it('should not update if the value continuously changes and a debounce time is set on the property', (done) => {
-    var subject = new TestSubject(new Validation(new ObserverLocator(), new ValidationConfig()), null);
+    var subject = new TestSubject(new Validation(container.get(ObserverLocator), new ValidationConfig()), null);
     subject.validation.ensure('firstName', (config) => {config.useDebounceTimeout(50)}).isNotEmpty().hasLengthBetween(5, 10);
 
     setTimeout(() => { //Do setTimout 0 to allow initial validation
@@ -319,7 +329,7 @@ describe('Basic validation tests', () => {
   });
 
   it('should only set the result based on the latest value', (done) => {
-    var subject = new TestSubject(new Validation(new ObserverLocator()), '');
+    var subject = new TestSubject(new Validation(container.get(ObserverLocator)), '');
     subject.validation.ensure('firstName').passes( () => { return new Promise((fulfil) => {
       setTimeout(()=>{
         fulfil(false);

@@ -1,6 +1,7 @@
 import {ObserverLocator} from 'aurelia-binding';
 import {Validation} from '../src/validation';
 import {Expectations} from './expectations';
+import {Container} from 'aurelia-dependency-injection';
 
 class TestSubject {
   constructor(validation) {
@@ -18,11 +19,16 @@ class TestSubject {
   }
 
   static createInstance() {
-    return new TestSubject(new Validation(new ObserverLocator()));
+    let container = new Container();
+    return new TestSubject(new Validation(container.get(ObserverLocator)));
   }
 }
 
 describe('Nested property tests', () => {
+  let container;
+  beforeEach(() => {
+    container = new Container();
+  });
   it('should work on empty, nested properties', (done) => {
     var expectations = new Expectations(expect, done);
     var subject = TestSubject.createInstance();
@@ -112,7 +118,7 @@ describe('Nested property tests', () => {
     var subject = TestSubject.createInstance();
     subject.company.email = 'Bob@thebuilder.com';
 
-    var observer = new ObserverLocator()
+    var observer = container.get(ObserverLocator)
       .getObserver(subject, 'company.isEmail');
 
     expect(observer.getValue()).toBe(undefined);

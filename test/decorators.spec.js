@@ -3,6 +3,7 @@ import {ObserverLocator} from 'aurelia-binding';
 import {Expectations} from './expectations';
 import {ValidationConfig} from '../src/validation-config';
 import {ensure} from '../src/decorators';
+import {Container} from 'aurelia-dependency-injection';
 
 class TestSubject {
 
@@ -10,7 +11,8 @@ class TestSubject {
   firstName = '';
 
   constructor() {
-    this.validation = new Validation(new ObserverLocator()).on(this);
+    let container = new Container();
+    this.validation = new Validation(container.get(ObserverLocator)).on(this);
   }
 }
 

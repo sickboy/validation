@@ -2,6 +2,7 @@ import {Validation} from '../src/validation';
 import {ObserverLocator} from 'aurelia-binding';
 import {Expectations} from './expectations';
 import {ValidationConfig} from '../src/validation-config';
+import {Container} from 'aurelia-dependency-injection';
 
 class APITest {
   constructor(propertyValue, validation, validationConfigCallback) {
@@ -19,7 +20,8 @@ class APITest {
   }
 
   static Assert(expectations, callback, value, validity, validationConfigCallback) {
-    var subject = new APITest(value, new Validation(new ObserverLocator()), validationConfigCallback);
+    let container = new Container();
+    var subject = new APITest(value, new Validation(container.get(ObserverLocator)), validationConfigCallback);
     expect(callback(subject.validation)).toBe(subject.validation); //without this, the fluent API would break
     expectations.assert(subject.validation.validate(), validity); //simple check if it also works
     expectations.assert(() => { //and a check if valid has message '', invalid has an actual message
@@ -492,11 +494,17 @@ describe('Some simple API tests', ()=> {
 });
 
 describe('Some simple tests on .result', ()=> {
+  let container;
+
+  beforeEach(() => {
+    container = new Container();
+  });
+
   it('on individual valid properties', (done) => {
-    var expectations = new Expectations(expect, done);
+    let expectations = new Expectations(expect, done);
 
     let subject = {password: 'Abc*12345'};
-    subject.validation = new Validation(new ObserverLocator(), new ValidationConfig()).on(subject)
+    subject.validation = new Validation(container.get(ObserverLocator), new ValidationConfig()).on(subject)
       .ensure('password').isNotEmpty().hasMinLength(8).isStrongPassword();
 
     expectations.assert(subject.validation.validate(), true);
@@ -518,7 +526,7 @@ describe('Some simple tests on .result', ()=> {
     var expectations = new Expectations(expect, done);
 
     let subject = {password: 'abc'};
-    subject.validation = new Validation(new ObserverLocator(), new ValidationConfig()).on(subject)
+    subject.validation = new Validation(container.get(ObserverLocator), new ValidationConfig()).on(subject)
       .ensure('password').isNotEmpty().hasMinLength(8).isStrongPassword();
 
     expectations.assert(subject.validation.validate(), false);
@@ -541,7 +549,7 @@ describe('Some simple tests on .result', ()=> {
     var expectations = new Expectations(expect, done);
 
     let subject = {password: 'abc'};
-    subject.validation = new Validation(new ObserverLocator(), new ValidationConfig()).on(subject)
+    subject.validation = new Validation(container.get(ObserverLocator), new ValidationConfig()).on(subject)
       .ensure('password').isNotEmpty().hasMinLength(8).isStrongPassword();
 
     expectations.assert(subject.validation.validate(), false);
@@ -582,9 +590,15 @@ describe('Some simple tests on .result', ()=> {
 });
 
 describe('Some simple configuration API tests', ()=> {
+  let container;
+
+  beforeEach(() => {
+    container = new Container();
+  });
+
   it('on computedFrom with a single dependencies', (done) => {
     let subject = {password: 'Abc*12345', confirmPassword: 'Abc*12345'};
-    subject.validation = new Validation(new ObserverLocator(), new ValidationConfig()).on(subject)
+    subject.validation = new Validation(container.get(ObserverLocator), new ValidationConfig()).on(subject)
       .ensure('password').isNotEmpty().hasMinLength(8).isStrongPassword()
       .ensure('confirmPassword', (c) => {
         c.computedFrom('password')
@@ -606,7 +620,7 @@ describe('Some simple configuration API tests', ()=> {
   });
   it('on computedFrom with an array of string dependencies', (done) => {
     let subject = {password: 'Abc*12345', confirmPassword: 'Abc*12345'};
-    subject.validation = new Validation(new ObserverLocator(), new ValidationConfig()).on(subject)
+    subject.validation = new Validation(container.get(ObserverLocator), new ValidationConfig()).on(subject)
       .ensure('password').isNotEmpty().hasMinLength(8).isStrongPassword()
       .ensure('confirmPassword', (c) => {
         c.computedFrom(['someProperty', 'password'])
