@@ -18,9 +18,10 @@ System.config({
     "aurelia-logging": "npm:aurelia-logging@1.0.0-beta.1",
     "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.1",
     "aurelia-pal-browser": "npm:aurelia-pal-browser@1.0.0-beta.1",
+    "aurelia-task-queue": "npm:aurelia-task-queue@1.0.0-beta.1",
     "aurelia-templating": "npm:aurelia-templating@1.0.0-beta.1",
-    "babel": "npm:babel-core@5.8.22",
-    "babel-runtime": "npm:babel-runtime@5.8.20",
+    "babel": "npm:babel-core@5.8.34",
+    "babel-runtime": "npm:babel-runtime@5.8.34",
     "core-js": "npm:core-js@1.2.6",
     "traceur": "github:jmcriffey/bower-traceur@0.0.91",
     "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.91",
@@ -76,7 +77,7 @@ System.config({
       "aurelia-task-queue": "npm:aurelia-task-queue@1.0.0-beta.1",
       "core-js": "npm:core-js@1.2.6"
     },
-    "npm:babel-runtime@5.8.20": {
+    "npm:babel-runtime@5.8.34": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:core-js@1.2.6": {

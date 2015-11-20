@@ -1,4 +1,5 @@
 import {metadata} from 'aurelia-metadata';
+// import {TaskQueue} from 'aurelia-task-queue';
 
 export class ValidationMetadata {
   static metadataKey = 'aurelia:validation';
