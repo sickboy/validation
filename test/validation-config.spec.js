@@ -1,4 +1,6 @@
 import {ValidationConfig} from '../src/validation-config';
+import {Container} from 'aurelia-dependency-injection';
+import {ValidationSummary} from '../src/validation-summary';
 
 describe('ValidationConfig', () => {
   it('should have default values', () => {
@@ -68,13 +70,46 @@ describe('ValidationConfig', () => {
   });
 
   it('should allow to override parents with own values', () => {
-    var parentConfig = new ValidationConfig();
+    let parentConfig;
+    let config;
+    parentConfig = new ValidationConfig();
     parentConfig.setValue('test', 'a');
-    var config = new ValidationConfig(parentConfig);
+    config = new ValidationConfig(parentConfig);
     expect(config.getValue('test')).toBe('a');
-
     config.setValue('test', 'c');
     parentConfig.setValue('test', 'b');
     expect(config.getValue('test')).toBe('c');
+  });
+
+  describe('error rendering', () => {
+    let validationSummary;
+    let container;
+    let validationConfig;
+
+    beforeEach(() => {
+      container = new Container();
+      validationConfig = container.get(ValidationConfig);
+      validationSummary = container.get(ValidationSummary);
+    });
+
+    it('defaults to isRenderingErrors is false', () => {
+      expect(validationConfig.getValue('isRenderingErrors')).toBe(false);
+    });
+
+    describe('.setValidationSummary', () => {
+      it('turns on isRenderingErrors to true', () => {
+        validationConfig.setValidationSummary(validationSummary);
+        expect(validationConfig.getValue('isRenderingErrors')).toBe(true);
+      });
+
+      it('sets the validationSummary to an instance of validationSummary', () => {
+        validationConfig.setValidationSummary(validationSummary);
+        expect(validationConfig.getValue('validationSummary')).toBe(validationSummary);
+      });
+    });
+
+    it('does not call validationSummarys showErrors method', () => {
+      expect(validationConfig.isRenderingErrors).toBe(undefined);
+    });
   });
 });

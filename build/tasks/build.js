@@ -16,7 +16,6 @@ var jsName = paths.packageName + '.js';
 
 gulp.task('build-index', function(){
   var importsToAdd = [];
-
   return gulp.src([
     paths.root + '*.js',
     paths.root + '**/*.js',
@@ -29,7 +28,8 @@ gulp.task('build-index', function(){
     }))
     .pipe(concat(jsName))
     .pipe(insert.transform(function(contents) {
-      return tools.createImportBlock(importsToAdd) + contents;
+      var results = tools.createImportBlock(importsToAdd) + contents;
+      return results;
     }))
     .pipe(to5(assign({}, compilerOptions, {modules:'common'})));
 });

@@ -25,6 +25,7 @@ export class ValidationGroup {
     this.onValidateCallbacks = [];
     this.onPropertyValidationCallbacks = [];
     this.isValidating = false;
+    this.node = null;
     this.onDestroy = config.onLocaleChanged(() => {
       this.validate(false, true);
     });
@@ -157,6 +158,10 @@ export class ValidationGroup {
     });
     promise = promise.then(() => {
       this.isValidating = false;
+      if (this.config && this.config.getValue('isRenderingErrors')) {
+        let validationSummary = this.config.getValue('validationSummary');
+        validationSummary.renderErrors(this.result);
+      }
       if (this.result.isValid) {
         return Promise.resolve(this.result);
       }

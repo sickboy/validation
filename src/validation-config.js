@@ -1,4 +1,5 @@
 import {ValidationLocale} from './validation-locale';
+import {ValidationSummary} from './validation-summary';
 
 export class ValidationConfigDefaults {
 
@@ -9,8 +10,11 @@ ValidationConfigDefaults._defaults = {
   dependencies: [],
   locale: 'en-US',
   localeResources: 'aurelia-validation/resources/',
+  validationSummary: ValidationSummary,
+  isRenderingErrors: false,
   allPropertiesAreMandatory: false
 };
+
 ValidationConfigDefaults.defaults = function() {
   let defaults = {};
   Object.assign(defaults, ValidationConfigDefaults._defaults);
@@ -77,6 +81,14 @@ export class ValidationConfig {
   treatAllPropertiesAsOptional() {
     this.setValue('allPropertiesAreMandatory', false);
     return this;
+  }
+  setValidationSummary(validationSummary) {
+    this.setValue('validationSummary', validationSummary);
+    this.setValue('isRenderingErrors', true);
+    return this;
+  }
+  getValidationSummary() {
+    return this.getValue('validationSummary');
   }
 }
 ValidationConfig.uniqueListenerId = 0;
