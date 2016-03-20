@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-framework';
-import {Validation} from 'aurelia-validation';
+import {ensure, Validation} from 'aurelia-validation';
 
 @inject(Validation)
 export class App {
@@ -7,6 +7,8 @@ export class App {
   lastName = 'Skywalker';
   hasValidated = false;
   validationMessages = [];
+  @ensure(function(it){it.isNotEmpty().hasLengthBetween(3,10)})
+  testing = '';
   constructor(validation) {
     this.validation = validation;
     this.validation = validation.on(this)

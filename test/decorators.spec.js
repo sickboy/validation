@@ -10,8 +10,9 @@ class TestSubject {
   @ensure(function(it){it.isNotEmpty().hasLengthBetween(3,10)})
   firstName = '';
 
-  constructor(observerLocator) {
+  constructor(observerLocator, firstName) {
     this.validation = new Validation(observerLocator).on(this);
+    this.firstName = firstName;
   }
 }
 
@@ -33,7 +34,7 @@ describe( 'Tests on using decorators to set up validation', () => {
 
   it('on a single property that is valid', (done) => {
     var expectations = new Expectations(expect, done);
-    let subject = new TestSubject(observerLocator);
+    let subject = new TestSubject(observerLocator, "Bobette");
     subject.firstName = "Bobette";
     expectations.assert(subject.validation.validate(), true);
     expectations.validate();
